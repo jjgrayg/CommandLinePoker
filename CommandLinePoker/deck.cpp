@@ -1,11 +1,13 @@
 #include "deck.hpp"
 #include <cstdlib>
+#include <time.h>
 /////////////////////////////
 // CARD DEFS ////////////////
 /////////////////////////////
 
 // Constructor for card
 card::card(const String& suitin, const char& facein) {
+	isCard = true;
 	suit = suitin;
 	face = facein;
 	switch (face) {
@@ -28,6 +30,7 @@ card::card(const String& suitin, const char& facein) {
 
 // Assignment operator overload
 card& card::operator=(card lhs) {
+	this->isCard = lhs.isCard;
 	this->suit = lhs.suit;
 	this->face = lhs.face;
 	this->value = lhs.value;
@@ -43,11 +46,13 @@ bool card::operator==(const card& lhs) {
 
 // Output operator overload
 std::ostream& operator<<(std::ostream& out, const card& lhs) {
-	if (lhs.face != '0') {
-		out << lhs.face << " of " << lhs.suit;
-	}
-	else {
-		out << '1' << lhs.face << " of " << lhs.suit;
+	if (lhs.isCard) {
+		if (lhs.face != '0') {
+			out << lhs.face << " of " << lhs.suit;
+		}
+		else {
+			out << '1' << lhs.face << " of " << lhs.suit;
+		}
 	}
 	return out;
 }
@@ -68,10 +73,14 @@ deck::deck() {
 	card addCard;
 
 	for (int i = 0; i < DECK_SIZE; i++) {
+		//Define random seed
+		srand(time(NULL));
+
 		bool inDeck = true;
 		while (inDeck) {
 			randSuit = rand() % 4;
 			randFace = rand() % 13;
+
 			// Determine the suit
 			switch (randSuit) {
 			case 0: decidedSuit = "Hearts"; break;
@@ -110,6 +119,39 @@ deck::deck() {
 
 // Output operator for deck
 std::ostream& operator<<(std::ostream& out, deck& deck) {
-	for (int i = 0; i < DECK_SIZE; i++) out << deck.cardArray[i] << std::endl;
+	for (int i = (DECK_SIZE - 1); i >= 0; i--) out << deck.cardArray[i] << std::endl;
+	return out;
+}
+
+/////////////////////////////
+// PLAYER DEFS //////////////
+/////////////////////////////
+
+// Default constructor for player
+player::player() {
+	currentIndex = 0;
+	id = "/0";
+	for (int i = 0; i < HAND_SIZE; i++) {
+		hand[i] = card();
+	}
+}
+
+// ID constructor for player
+player::player(String s) : player() {
+	id = s;
+}
+
+// Draw member function
+void player::draw(deck& deck) {
+	hand[currentIndex] = deck.cards.pop();
+	currentIndex++;
+	if (currentIndex > 4) currentIndex = 4;
+}
+
+// Prints the current hand held by the player
+std::ostream& operator<<(std::ostream& out, player player) {
+	for (int i = 0; i <= player.currentIndex; i++) {
+		out << player.hand[i] << std::endl;
+	}
 	return out;
 }

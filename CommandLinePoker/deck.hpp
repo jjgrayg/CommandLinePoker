@@ -13,7 +13,7 @@
 class card {
 public:
 
-	card() : suit("0"), face('0'), value(0) {};
+	card() : isCard(false), suit("0"), face('0'), value(0) {};
 	card(const String&, const char&);
 
 	card& operator=(card);
@@ -22,6 +22,7 @@ public:
 	friend std::ostream& operator<<(std::ostream&, const card&);
 
 	// Member vars
+	bool isCard;
 	String suit;
 	char face;
 	int value;
@@ -36,7 +37,7 @@ public:
 
 	deck();
 
-	friend std::ostream& operator<<(std::ostream&, deck&);
+	friend std::ostream& operator<<(std::ostream&, deck&); //DEBUGGING
 
 	stack<card> cards;
 
@@ -44,4 +45,25 @@ private:
 	card cardArray[DECK_SIZE];
 };
 
+// Class definition for player
+
+const int HAND_SIZE = 5;
+
+class player {
+public:
+	player();
+	player(String);
+
+	void draw(deck&);
+	int evaluate();
+	friend std::ostream& operator<<(std::ostream&, player);
+
+	String id;
+	card hand[HAND_SIZE];
+private:
+	int currentIndex;
+};
+
+// Free function
+String determineWinner();
 #endif
