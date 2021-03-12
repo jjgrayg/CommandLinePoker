@@ -74,7 +74,7 @@ deck::deck() {
 
 	for (int i = 0; i < DECK_SIZE; i++) {
 		//Define random seed
-		srand(time(NULL));
+		// srand(time(NULL));
 
 		bool inDeck = true;
 		while (inDeck) {
@@ -131,6 +131,9 @@ std::ostream& operator<<(std::ostream& out, deck& deck) {
 player::player() {
 	currentIndex = 0;
 	id = "/0";
+	highVal = 0;
+	score = 0;
+	highestCardIndex = 0;
 	for (int i = 0; i < HAND_SIZE; i++) {
 		hand[i] = card();
 	}
@@ -148,10 +151,55 @@ void player::draw(deck& deck) {
 	if (currentIndex > 4) currentIndex = 4;
 }
 
+// Gets the highest value card and assigns it to highVal
+void player::assignHighest() {
+	int temp = 0;
+	for (int i = 0; i < HAND_SIZE; i++) {
+		temp = hand[i].value;
+		if (temp > highVal) { 
+			highVal = temp; 
+			highestCardIndex = i; 
+		}
+	}
+}
+
+// Generate a score for the player and assign to score
+void player::evaluate() {
+
+	// Check for "-of-a-kind" hands
+	int faceMatches[HAND_SIZE];
+	for (int i = 0; i < HAND_SIZE; i++) faceMatches[i] = 0;
+	int matches = 0;
+	for (int i = 0; i < HAND_SIZE; i++) {
+		for (int j = 0; i < HAND_SIZE; i++) {
+			if (hand[i].face == hand[j].face) {
+				faceMatches[i] = faceMatches[i] + 1;
+			}
+		}
+	}
+
+	score = max(faceMatches, HAND_SIZE);
+}
+
 // Prints the current hand held by the player
 std::ostream& operator<<(std::ostream& out, player player) {
 	for (int i = 0; i <= player.currentIndex; i++) {
 		out << player.hand[i] << std::endl;
 	}
 	return out;
+}
+
+/////////////////////////////
+// FREE FUNCS ///////////////
+/////////////////////////////
+
+// Get the max of an int array
+int max(int x[], int size) {
+	int max = 0;
+	int temp = 0;
+	for (int i = 0; i < size; i++) {
+		temp = x[i];
+		if (temp > max) max = temp;
+	}
+	return max;
 }

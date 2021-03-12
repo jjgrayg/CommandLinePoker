@@ -55,15 +55,21 @@ public:
 	player(String);
 
 	void draw(deck&);
-	int evaluate();
+	void assignHighest();
+	void evaluate();
 	friend std::ostream& operator<<(std::ostream&, player);
 
 	String id;
 	card hand[HAND_SIZE];
+
+	int score;
+	int highVal;
+	int highestCardIndex;
 private:
 	int currentIndex;
 };
 
 // Free function
+int max(int[], int);
 String determineWinner();
 #endif
