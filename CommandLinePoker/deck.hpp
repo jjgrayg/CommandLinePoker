@@ -70,6 +70,6 @@ private:
 };
 
 // Free function
-int max(int[], int);
+int int max(int[], int);
 String determineWinner();
 #endif

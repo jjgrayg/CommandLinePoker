@@ -166,19 +166,27 @@ void player::assignHighest() {
 // Generate a score for the player and assign to score
 void player::evaluate() {
 
-	// Check for "-of-a-kind" hands
+	bool ofAKind3 = false;
+
+	// Check for "3-of-a-kind" hand
 	int faceMatches[HAND_SIZE];
 	for (int i = 0; i < HAND_SIZE; i++) faceMatches[i] = 0;
-	int matches = 0;
+	matches = 0;
+	int matchIndex = -1;
 	for (int i = 0; i < HAND_SIZE; i++) {
-		for (int j = 0; i < HAND_SIZE; i++) {
+		for (int j = i; j < HAND_SIZE; j++) {
 			if (hand[i].face == hand[j].face) {
 				faceMatches[i] = faceMatches[i] + 1;
+				matchIndex = i;
 			}
 		}
 	}
 
-	score = max(faceMatches, HAND_SIZE);
+	int max, maxIndex = max(faceMatches, HAND_SIZE) == 3;
+
+	if (max == 3) ofAKind3 = true;
+
+	if (ofAKind3) score = (3 * hand[maxIndex].value);
 }
 
 // Prints the current hand held by the player
@@ -193,13 +201,17 @@ std::ostream& operator<<(std::ostream& out, player player) {
 // FREE FUNCS ///////////////
 /////////////////////////////
 
-// Get the max of an int array
-int max(int x[], int size) {
+// Get the max of an int array and its location
+int int max(int x[], int size) {
 	int max = 0;
 	int temp = 0;
+	int maxIndex = 0;
 	for (int i = 0; i < size; i++) {
 		temp = x[i];
-		if (temp > max) max = temp;
+		if (temp > max) {
+			max = temp;
+			maxIndex = i;
+		}
 	}
-	return max;
+	return max, maxIndex;
 }
