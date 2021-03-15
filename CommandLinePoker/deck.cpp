@@ -1,6 +1,8 @@
 #include "deck.hpp"
 #include <cstdlib>
 #include <time.h>
+#include <algorithm>
+#include <vector>
 /////////////////////////////
 // CARD DEFS ////////////////
 /////////////////////////////
@@ -74,7 +76,10 @@ deck::deck() {
 
 	for (int i = 0; i < DECK_SIZE; i++) {
 		//Define random seed
-		// srand(time(NULL));
+		//srand(time(NULL));
+
+		//Define a set seed
+		srand(2);
 
 		bool inDeck = true;
 		while (inDeck) {
@@ -166,27 +171,84 @@ void player::assignHighest() {
 // Generate a score for the player and assign to score
 void player::evaluate() {
 
+	bool twoPair = false;
+	bool onePair = false;
 	bool ofAKind3 = false;
+	bool ofAKind4 = false;
+	bool straight = false;
+	bool flush = false;
+	bool straightFlush = false;
+	bool royal = false;
 
-	// Check for "3-of-a-kind" hand
+	// Sort from lowest to highest
+	std::vector<int> sortedValues;
+	for (int i = 0; i < HAND_SIZE; i++) sortedValues.push_back(hand[i].value);
+	std::sort(sortedValues.begin(), sortedValues.begin() + 5);
+
+	for (int i = 0; i < HAND_SIZE; ++i)
+		std::cout << sortedValues[i] << " ";
+
+	// Check for a straight
+	int straightCount = 0;
+	for (int i = 0; i < HAND_SIZE - 1; i++) {
+		if (sortedValues[i] == sortedValues[i + 1] - 1) {
+			straight = true;
+			straightCount++;
+		}
+		else if (straightCount != 4) straight = false;
+	}
+
+	// Check for a royal
+	if (sortedValues[0] == 10 && straight) royal = true;
+
+	// Check for flush
+	int suitCount = 0;
+	for (int i = 0; i < HAND_SIZE - 1; i++) {
+		if (hand[i].suit == hand[i + 1].suit) suitCount += 1;
+	}
+	if (suitCount == 4) flush = true;
+
+	// Check for "-of-a-kind" hand
 	int faceMatches[HAND_SIZE];
 	for (int i = 0; i < HAND_SIZE; i++) faceMatches[i] = 0;
-	matches = 0;
-	int matchIndex = -1;
 	for (int i = 0; i < HAND_SIZE; i++) {
 		for (int j = i; j < HAND_SIZE; j++) {
 			if (hand[i].face == hand[j].face) {
 				faceMatches[i] = faceMatches[i] + 1;
-				matchIndex = i;
 			}
 		}
 	}
 
-	int max, maxIndex = max(faceMatches, HAND_SIZE) == 3;
+	// Count the number of pairs
+	int pairCount = 0;
+	for (int i = 0; i < HAND_SIZE; i++) {
+		if (faceMatches[i] == 2) pairCount++;
+	}
 
-	if (max == 3) ofAKind3 = true;
+	maxInfo maxInfo = max(faceMatches, HAND_SIZE);
+	assignHighest();
 
-	if (ofAKind3) score = (3 * hand[maxIndex].value);
+	if (pairCount == 2) twoPair = true;
+	else if (maxInfo.maxVal == 2) onePair = true;
+	else if (maxInfo.maxVal == 3) ofAKind3 = true;
+	else if (maxInfo.maxVal == 4) ofAKind4 = true;
+
+	if (straight && flush && royal) score = (50 * highVal);
+	else if (straight && flush) score = (25 * highVal);
+	else if (straight) score = (11 * highVal);
+	else if (twoPair) {
+		int temp = 0;
+		for (int i = 0; i < HAND_SIZE; i++) {
+			if (faceMatches[i] == 2) temp += hand[i].value;
+		}
+		score = (7 * temp);
+	}
+	else if (onePair) score = (4 * hand[maxInfo.maxIndex].value);
+	else if (ofAKind3) score = (9 * hand[maxInfo.maxIndex].value);
+	else if (ofAKind4) score = (12 * hand[maxInfo.maxIndex].value);
+	else {
+		score = highVal;
+	}
 }
 
 // Prints the current hand held by the player
@@ -202,10 +264,11 @@ std::ostream& operator<<(std::ostream& out, player player) {
 /////////////////////////////
 
 // Get the max of an int array and its location
-int int max(int x[], int size) {
+maxInfo max(int x[], int size) {
 	int max = 0;
 	int temp = 0;
 	int maxIndex = 0;
+	maxInfo result;
 	for (int i = 0; i < size; i++) {
 		temp = x[i];
 		if (temp > max) {
@@ -213,5 +276,8 @@ int int max(int x[], int size) {
 			maxIndex = i;
 		}
 	}
-	return max, maxIndex;
+
+	result.maxIndex = maxIndex;
+	result.maxVal = max;
+	return result;
 }

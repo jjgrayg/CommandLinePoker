@@ -69,7 +69,15 @@ private:
 	int currentIndex;
 };
 
+// Class for storing information returned from the max function
+class maxInfo {
+public:
+	int maxVal;
+	int maxIndex;
+};
+
 // Free function
-int int max(int[], int);
+maxInfo max(int[], int);
 String determineWinner();
+
 #endif

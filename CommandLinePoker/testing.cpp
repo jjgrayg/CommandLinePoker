@@ -12,10 +12,32 @@ int main() {
 	testPlayer.draw(testDeck);
 	std::cout << testPlayer.id << "'s Three card hand: " << testPlayer << std::endl;
 	testPlayer.draw(testDeck);
-	std::cout << testPlayer.id << "'s Four card hand: " << testPlayer << std::endl;
 	testPlayer.draw(testDeck);
+	std::cout << testPlayer.id << "'s full hand: " << std::endl << testPlayer << std::endl;
 	testPlayer.assignHighest();
 	std::cout << "The highest value present is: " << testPlayer.highVal << ". The card is: " << testPlayer.hand[testPlayer.highestCardIndex] << std::endl;
 	testPlayer.evaluate();
 	std::cout << "The score is: " << testPlayer.score;
+
+	//Testing if straight works
+	card card1("Clubs", '0');
+	card card2("Clubs", 'J');
+	card card3("Clubs", 'Q');
+	card card4("Clubs", 'K');
+	card card5("Clubs", 'A');
+	testDeck.cards.push(card1);
+	testDeck.cards.push(card2);
+	testDeck.cards.push(card3);
+	testDeck.cards.push(card4);
+	testDeck.cards.push(card5);
+
+	player straightPlayer("GOD");
+	straightPlayer.draw(testDeck);
+	straightPlayer.draw(testDeck);
+	straightPlayer.draw(testDeck);
+	straightPlayer.draw(testDeck);
+	straightPlayer.draw(testDeck);
+	std::cout << straightPlayer.id << "'s full hand: " << std::endl << straightPlayer << std::endl;
+	straightPlayer.evaluate();
+	std::cout << "The score is: " << straightPlayer.score;
 }
