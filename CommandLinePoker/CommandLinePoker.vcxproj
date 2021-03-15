@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="deck.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="string.cpp" />
     <ClCompile Include="testing.cpp" />
   </ItemGroup>

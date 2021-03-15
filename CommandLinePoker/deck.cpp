@@ -139,6 +139,8 @@ player::player() {
 	highVal = 0;
 	score = 0;
 	highestCardIndex = 0;
+	money = 0;
+	folded = false;
 	for (int i = 0; i < HAND_SIZE; i++) {
 		hand[i] = card();
 	}
@@ -147,6 +149,7 @@ player::player() {
 // ID constructor for player
 player::player(String s) : player() {
 	id = s;
+	money = 1000;
 }
 
 // Draw member function
@@ -255,6 +258,19 @@ void player::evaluate() {
 	}
 }
 
+// Fold member function
+void player::fold() {
+	folded = true;
+}
+
+// Resets the hand of the player
+void player::resetHand() {
+	for (int i = 0; i < HAND_SIZE; i++) {
+		hand[i] = card();
+	}
+	currentIndex = 0;
+}
+
 // Assignment operator overload for player
 player& player::operator=(player lhs) {
 	this->id = lhs.id;
@@ -274,6 +290,54 @@ std::ostream& operator<<(std::ostream& out, player player) {
 	}
 	return out;
 }
+/////////////////////////////
+// TABLE DEFS ///////////////
+/////////////////////////////
+
+// Lets the argued player place a bet into the pot
+void table::bet(player& lhs, int amount) {
+	if (amount >= lastBet) {
+		if (lhs.money >= amount) {
+			lhs.money = lhs.money - amount;
+			pot = pot + amount;
+			lastBet = amount;
+		}
+		else {
+			pot = pot + lhs.money;
+			lastBet = lhs.money;
+			lhs.money = 0;
+		}
+	}
+	else {
+		call(lhs);
+	}
+}
+
+// Lets the player call on the previous bet
+void table::call(player& lhs) {
+	bet(lhs, lastBet);
+}
+
+// Award the winnings to the winner
+void table::awardWinnings(player& lhs) {
+	lhs.money = lhs.money + pot;
+	pot = 0;
+	lastBet = 0;
+}
+/////////////////////////////
+// BOT DEFS /////////////////
+/////////////////////////////
+bot::bot(int inWeightAmountBet, int inWeightCurrentScore, int inWeightAmountRemainingCash, String ID) {
+	wAmountBet = inWeightAmountBet;
+	wCurrentScore = inWeightCurrentScore;
+	wAmountRemainingCash = inWeightAmountRemainingCash;
+	id = ID;
+}
+
+// Utilizes the weights and gives the bot's decision
+//String bot::makeDecision(table Table) {
+//	evaluate();
+//}
 
 /////////////////////////////
 // FREE FUNCS ///////////////
@@ -308,6 +372,10 @@ player determineWinner(player player1, player player2) {
 	player2.evaluate();
 	if (player1.score > player2.score) return player1;
 	else if (player2.score > player1.score) return player2;
+	else {
+		player tie("TIE");
+		return tie;
+	}
 }
 
 // 3-Player version

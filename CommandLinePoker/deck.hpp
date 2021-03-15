@@ -57,6 +57,10 @@ public:
 	void draw(deck&);
 	void assignHighest();
 	void evaluate();
+	void fold();
+
+	void resetHand();
+
 	player& operator=(player);
 	friend std::ostream& operator<<(std::ostream&, player);
 
@@ -67,8 +71,12 @@ public:
 	int highVal;
 	int highestCardIndex;
 	String handRank;
-private:
+
+	bool folded;
+	int money;
 	int currentIndex;
+
+private:
 };
 
 // Class for storing information returned from the max function
@@ -76,6 +84,35 @@ class maxInfo {
 public:
 	int maxVal;
 	int maxIndex;
+};
+
+// Class defintion for the table
+class table {
+public:
+
+	table() : pot(0), lastBet(0) {};
+
+	void bet(player&, int);
+	void call(player&);
+	void awardWinnings(player&);
+
+	int pot;
+	int lastBet;
+};
+
+// The AI
+class bot : public player {
+public:
+	bot() : wAmountBet(0), wCurrentScore(0), wAmountRemainingCash(0) {};
+	bot(int, int, int, String);
+
+	String makeDecision(table);
+
+private:
+	// Decision making weights
+	int wAmountBet;
+	int wCurrentScore;
+	int wAmountRemainingCash;
 };
 
 // Free function
