@@ -31,7 +31,7 @@ int main() {
 	testDeck.cards.push(card4);
 	testDeck.cards.push(card5);
 
-	player straightPlayer("GOD");
+	player straightPlayer("HighCard");
 	straightPlayer.draw(testDeck);
 	straightPlayer.draw(testDeck);
 	straightPlayer.draw(testDeck);
@@ -39,5 +39,28 @@ int main() {
 	straightPlayer.draw(testDeck);
 	std::cout << straightPlayer.id << "'s full hand: " << std::endl << straightPlayer << std::endl;
 	straightPlayer.evaluate();
-	std::cout << "The score is: " << straightPlayer.score << " With a " << straightPlayer.handRank;
+	std::cout << "The score is: " << straightPlayer.score << " With a " << straightPlayer.handRank << std::endl << std::endl;
+
+	std::cout << "And the winner is " << determineWinner(straightPlayer, testPlayer).id << " with a " << determineWinner(straightPlayer, testPlayer).handRank << "!" << std::endl;
+
+	player player3("Literal Jesus");
+	card card6("Clubs", '0');
+	card card7("Clubs", 'J');
+	card card8("Clubs", 'Q');
+	card card9("Clubs", 'A');
+	card card10("Clubs", 'K');
+	testDeck.cards.push(card6);
+	testDeck.cards.push(card7);
+	testDeck.cards.push(card8);
+	testDeck.cards.push(card9);
+	testDeck.cards.push(card10);
+	player3.draw(testDeck);
+	player3.draw(testDeck);
+	player3.draw(testDeck);
+	player3.draw(testDeck);
+	player3.draw(testDeck);
+	std::cout << player3.id << "'s full hand: " << std::endl << player3 << std::endl;
+
+	std::cout << "And the winner is " << determineWinner(straightPlayer, testPlayer, player3).id << " with a " << determineWinner(straightPlayer, testPlayer, player3).handRank << "!";
+
 }

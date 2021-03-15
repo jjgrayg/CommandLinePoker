@@ -57,6 +57,7 @@ public:
 	void draw(deck&);
 	void assignHighest();
 	void evaluate();
+	player& operator=(player);
 	friend std::ostream& operator<<(std::ostream&, player);
 
 	String id;
@@ -79,6 +80,10 @@ public:
 
 // Free function
 maxInfo max(int[], int);
-String determineWinner();
+player determineWinner(player, player);
+player determineWinner(player, player, player);
+player determineWinner(player, player, player, player);
+player determineWinner(player, player, player, player, player);
+player determineWinner(player, player, player, player, player, player);
 
 #endif

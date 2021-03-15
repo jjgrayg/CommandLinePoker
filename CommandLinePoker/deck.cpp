@@ -184,9 +184,6 @@ void player::evaluate() {
 	for (int i = 0; i < HAND_SIZE; i++) sortedValues.push_back(hand[i].value);
 	std::sort(sortedValues.begin(), sortedValues.begin() + 5);
 
-	for (int i = 0; i < HAND_SIZE; ++i)
-		std::cout << sortedValues[i] << " ";
-
 	// Check for a straight
 	int straightCount = 0;
 	for (int i = 0; i < HAND_SIZE - 1; i++) {
@@ -258,6 +255,18 @@ void player::evaluate() {
 	}
 }
 
+// Assignment operator overload for player
+player& player::operator=(player lhs) {
+	this->id = lhs.id;
+	this->score = lhs.score;
+	this->highVal = lhs.highVal;
+	this->highestCardIndex = lhs.highestCardIndex;
+	this->handRank = lhs.handRank;
+	this->currentIndex = lhs.currentIndex;
+	for (int i = 0; i < HAND_SIZE; i++) this->hand[i] = lhs.hand[i];
+	return *this;
+}
+
 // Prints the current hand held by the player
 std::ostream& operator<<(std::ostream& out, player player) {
 	for (int i = 0; i <= player.currentIndex; i++) {
@@ -287,4 +296,32 @@ maxInfo max(int x[], int size) {
 	result.maxIndex = maxIndex;
 	result.maxVal = max;
 	return result;
+}
+
+/////////////////////////////
+// DETERMINE WINNER /////////
+/////////////////////////////
+
+// 2-Player version
+player determineWinner(player player1, player player2) {
+	player1.evaluate();
+	player2.evaluate();
+	if (player1.score > player2.score) return player1;
+	else if (player2.score > player1.score) return player2;
+}
+
+// 3-Player version
+player determineWinner(player player1, player player2, player player3) {
+	player1.evaluate();
+	player2.evaluate();
+	player3.evaluate();
+
+	player max;
+	if (player1.score > player2.score) max = player1;
+	else max = player2;
+
+	if (player2.score > player3.score) max = player2;
+	else max = player3;
+
+	return max;
 }
