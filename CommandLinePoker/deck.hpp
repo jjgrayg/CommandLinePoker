@@ -65,6 +65,7 @@ public:
 	int score;
 	int highVal;
 	int highestCardIndex;
+	String handRank;
 private:
 	int currentIndex;
 };

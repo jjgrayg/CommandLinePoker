@@ -76,10 +76,10 @@ deck::deck() {
 
 	for (int i = 0; i < DECK_SIZE; i++) {
 		//Define random seed
-		//srand(time(NULL));
+		srand(time(NULL));
 
 		//Define a set seed
-		srand(2);
+		//srand(2);
 
 		bool inDeck = true;
 		while (inDeck) {
@@ -177,7 +177,6 @@ void player::evaluate() {
 	bool ofAKind4 = false;
 	bool straight = false;
 	bool flush = false;
-	bool straightFlush = false;
 	bool royal = false;
 
 	// Sort from lowest to highest
@@ -192,11 +191,10 @@ void player::evaluate() {
 	int straightCount = 0;
 	for (int i = 0; i < HAND_SIZE - 1; i++) {
 		if (sortedValues[i] == sortedValues[i + 1] - 1) {
-			straight = true;
 			straightCount++;
 		}
-		else if (straightCount != 4) straight = false;
 	}
+	if (straightCount == 4) straight = true;
 
 	// Check for a royal
 	if (sortedValues[0] == 10 && straight) royal = true;
@@ -219,6 +217,11 @@ void player::evaluate() {
 		}
 	}
 
+	// Check for full house
+	for (int i = 0; i < HAND_SIZE; i++) {
+		if (faceMatches[i] == 3) ofAKind3 = true;
+	}
+
 	// Count the number of pairs
 	int pairCount = 0;
 	for (int i = 0; i < HAND_SIZE; i++) {
@@ -233,21 +236,25 @@ void player::evaluate() {
 	else if (maxInfo.maxVal == 3) ofAKind3 = true;
 	else if (maxInfo.maxVal == 4) ofAKind4 = true;
 
-	if (straight && flush && royal) score = (50 * highVal);
-	else if (straight && flush) score = (25 * highVal);
-	else if (straight) score = (11 * highVal);
+	if (straight && flush && royal) { score = (36608398 * highVal); handRank = "Royal Flush"; }
+	else if (straight && flush) { score = (5229771 * highVal); handRank = "Straight Flush"; }
+	else if (ofAKind4) { score = (747111 * hand[maxInfo.maxIndex].value); handRank = "4 of a Kind"; }
+	else if (twoPair && ofAKind3) { score = (106730 * highVal); handRank = "Full House"; }
+	else if (flush) { score = (15247 * highVal); handRank = "Flush"; }
+	else if (straight) { score = (2178 * highVal); handRank = "Straight"; }
+	else if (ofAKind3) { score = (311 * hand[maxInfo.maxIndex].value); handRank = "3 of a Kind"; }
 	else if (twoPair) {
 		int temp = 0;
 		for (int i = 0; i < HAND_SIZE; i++) {
 			if (faceMatches[i] == 2) temp += hand[i].value;
 		}
-		score = (7 * temp);
+		score = (23 * temp); 
+		handRank = "Two Pair";
 	}
-	else if (onePair) score = (4 * hand[maxInfo.maxIndex].value);
-	else if (ofAKind3) score = (9 * hand[maxInfo.maxIndex].value);
-	else if (ofAKind4) score = (12 * hand[maxInfo.maxIndex].value);
+	else if (onePair) { score = (8 * hand[maxInfo.maxIndex].value); handRank = "One Pair"; }
 	else {
 		score = highVal;
+		handRank = "High Card";
 	}
 }
 

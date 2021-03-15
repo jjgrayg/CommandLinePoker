@@ -17,14 +17,14 @@ int main() {
 	testPlayer.assignHighest();
 	std::cout << "The highest value present is: " << testPlayer.highVal << ". The card is: " << testPlayer.hand[testPlayer.highestCardIndex] << std::endl;
 	testPlayer.evaluate();
-	std::cout << "The score is: " << testPlayer.score;
+	std::cout << "The score is: " << testPlayer.score << std::endl;
 
 	//Testing if straight works
 	card card1("Clubs", '0');
-	card card2("Clubs", 'J');
-	card card3("Clubs", 'Q');
-	card card4("Clubs", 'K');
-	card card5("Clubs", 'A');
+	card card2("Hearts", 'J');
+	card card3("Diamonds", '9');
+	card card4("Spades", 'A');
+	card card5("Clubs", '8');
 	testDeck.cards.push(card1);
 	testDeck.cards.push(card2);
 	testDeck.cards.push(card3);
@@ -39,5 +39,5 @@ int main() {
 	straightPlayer.draw(testDeck);
 	std::cout << straightPlayer.id << "'s full hand: " << std::endl << straightPlayer << std::endl;
 	straightPlayer.evaluate();
-	std::cout << "The score is: " << straightPlayer.score;
+	std::cout << "The score is: " << straightPlayer.score << " With a " << straightPlayer.handRank;
 }
