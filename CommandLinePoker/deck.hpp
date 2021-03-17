@@ -71,6 +71,7 @@ public:
 	int highVal;
 	int highestCardIndex;
 	String handRank;
+	int onTheLine;
 
 	bool folded;
 	int money;
@@ -106,7 +107,10 @@ public:
 	bot() : wAmountBet(0), wCurrentScore(0), wAmountRemainingCash(0) {};
 	bot(int, int, int, String);
 
-	String makeDecision(table);
+	void makeDecision(table&);
+
+	String lastDecision;
+	bool justBet;
 
 private:
 	// Decision making weights

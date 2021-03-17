@@ -335,9 +335,13 @@ bot::bot(int inWeightAmountBet, int inWeightCurrentScore, int inWeightAmountRema
 }
 
 // Utilizes the weights and gives the bot's decision
-//String bot::makeDecision(table Table) {
-//	evaluate();
-//}
+void bot::makeDecision(table& Table) {
+	evaluate();
+	int decisionScore = (money * wAmountRemainingCash) + (score * wCurrentScore) - (Table.lastBet * wAmountBet);
+	if (decisionScore > 1500 && !justBet) { lastDecision = "bet"; justBet = true; Table.bet(*this, 100); std::cout << id << " bet $100." << std::endl; }
+	else if (decisionScore > 100) { lastDecision = "call"; Table.call(*this); std::cout << id << " called." << std::endl; }
+	else { lastDecision = "fold"; fold(); std::cout << id << " folded." << std::endl; }
+}
 
 /////////////////////////////
 // FREE FUNCS ///////////////
@@ -370,8 +374,8 @@ maxInfo max(int x[], int size) {
 player determineWinner(player player1, player player2) {
 	player1.evaluate();
 	player2.evaluate();
-	if (player1.score > player2.score) return player1;
-	else if (player2.score > player1.score) return player2;
+	if ((player1.score > player2.score || player2.folded) && !player1.folded) return player1;
+	else if ((player2.score > player1.score || player1.folded) && !player2.folded) return player2;
 	else {
 		player tie("TIE");
 		return tie;
