@@ -294,6 +294,46 @@ std::ostream& operator<<(std::ostream& out, player player) {
 // TABLE DEFS ///////////////
 /////////////////////////////
 
+// Begins a betting round, forces player1 to bet something on first betting round
+void table::bettingRound(player& player1, bot& theBot) {
+	if (bettingRoundCount == 0) {
+		std::cout << "How much would you like to bet? ";
+		int amount;
+		std::cin >> amount;
+		bet(player1, amount);
+		theBot.makeDecision(*this);
+	}
+	while (true) {
+		if ((theBot.lastDecision == "call" || theBot.lastDecision == "fold") && bettingRoundCount == 0) break;
+		else {
+			String decision;
+			std::cout << "What would you like to do (bet, check, or fold)? ";
+			std::cin >> decision;
+
+			if (decision == "bet" || decision == "Bet") {
+				int amount = 0;
+				std::cout << "How much would you like to bet? ";
+				std::cin >> amount;
+				bet(player1, amount);
+				player1.onTheLine =player1.onTheLine + amount;
+			}
+			else if (decision == "call" || decision == "Call") {
+				std::cout << "You called" << std::endl;
+				call(player1);
+				player1.onTheLine = player1.onTheLine + lastBet;
+				break;
+			}
+			else if (decision == "fold" || decision == "Fold") {
+				std::cout << "You have folded for this round" << std::endl;
+				player1.fold();
+				break;
+			}
+			theBot.makeDecision(*this);
+		}
+	}
+	bettingRoundCount += 1;
+}
+
 // Lets the argued player place a bet into the pot
 void table::bet(player& lhs, int amount) {
 	if (amount >= lastBet) {
@@ -380,20 +420,4 @@ player determineWinner(player player1, player player2) {
 		player tie("TIE");
 		return tie;
 	}
-}
-
-// 3-Player version
-player determineWinner(player player1, player player2, player player3) {
-	player1.evaluate();
-	player2.evaluate();
-	player3.evaluate();
-
-	player max;
-	if (player1.score > player2.score) max = player1;
-	else max = player2;
-
-	if (player2.score > player3.score) max = player2;
-	else max = player3;
-
-	return max;
 }

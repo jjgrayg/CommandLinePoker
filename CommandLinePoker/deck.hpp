@@ -9,6 +9,12 @@
 #include "stack.hpp"
 
 
+class card;
+class deck;
+class player;
+class bot;
+class table;
+
 // Class definition of card
 class card {
 public:
@@ -87,30 +93,20 @@ public:
 	int maxIndex;
 };
 
-// Class defintion for the table
-class table {
-public:
-
-	table() : pot(0), lastBet(0) {};
-
-	void bet(player&, int);
-	void call(player&);
-	void awardWinnings(player&);
-
-	int pot;
-	int lastBet;
-};
-
 // The AI
 class bot : public player {
 public:
-	bot() : wAmountBet(0), wCurrentScore(0), wAmountRemainingCash(0) {};
+	bot() : wAmountBet(0), wCurrentScore(0), wAmountRemainingCash(0), justBet(0), lastDecision("NONE") {};
 	bot(int, int, int, String);
 
 	void makeDecision(table&);
+	int decideAmount();
+	
+	void adjustWeights();
 
 	String lastDecision;
 	bool justBet;
+	bool isBot = true;
 
 private:
 	// Decision making weights
@@ -119,12 +115,26 @@ private:
 	int wAmountRemainingCash;
 };
 
+// Class defintion for the table
+class table {
+public:
+
+	table() : pot(0), lastBet(0), bettingRoundCount(0) {};
+
+	void bettingRound(player&, bot&);
+
+	void bet(player&, int);
+	void call(player&);
+	void check(player&);
+	void awardWinnings(player&);
+
+	int pot;
+	int lastBet;
+	int bettingRoundCount;
+};
+
 // Free function
 maxInfo max(int[], int);
 player determineWinner(player, player);
-player determineWinner(player, player, player);
-player determineWinner(player, player, player, player);
-player determineWinner(player, player, player, player, player);
-player determineWinner(player, player, player, player, player, player);
 
 #endif

@@ -36,29 +36,7 @@ int main() {
 			std::cout << "Your current hand: " << std::endl;
 			std::cout << human << std::endl;
 
-			std::cout << "What would you like to do (bet or fold)? ";
-			std::cin >> decision;
-
-			bool decisionMaking = true;
-			while (decisionMaking) {
-				if (decision == "0") return 1;
-				if (decision == "bet" || decision == "Bet") {
-					int amount = 0;
-					std::cout << "How much would you like to bet? ";
-					std::cin >> amount;
-					theTable.bet(human, amount);
-					human.onTheLine = human.onTheLine + amount;
-				}
-				else if (decision == "fold" || decision == "Fold") {
-					std::cout << "You have folded for this round" << std::endl;
-					human.fold();
-					break;
-				}
-				Bot.makeDecision(theTable);
-				if (Bot.lastDecision == "call" || Bot.lastDecision == "fold") break;
-				std::cout << "What would you like to do (bet, call, or fold)? ";
-				std::cin >> decision;
-			}
+			theTable.bettingRound(human, Bot);
 
 			system("CLS");
 			if (Bot.lastDecision == "call" || Bot.lastDecision == "fold") std::cout << Bot.id << " " << Bot.lastDecision << "ed." << std::endl;
@@ -73,34 +51,7 @@ int main() {
 			std::cout << "Your current hand: " << std::endl;
 			std::cout << human << std::endl;
 
-			decisionMaking = true;
-			while (decisionMaking) {
-
-				std::cout << "What would you like to do (bet, call, or fold)? ";
-				std::cin >> decision;
-				if (decision == "0") return 1;
-
-				if (decision == "bet" || decision == "Bet") {
-					int amount = 0;
-					std::cout << "How much would you like to bet? ";
-					std::cin >> amount;
-					theTable.bet(human, amount);
-					human.onTheLine = human.onTheLine + amount;
-				}
-				else if (decision == "call" || decision == "Call") {
-					std::cout << "You called" << std::endl;
-					theTable.call(human);
-					human.onTheLine = human.onTheLine + theTable.lastBet;
-					break;
-				}
-				else if (decision == "fold" || decision == "Fold") {
-					std::cout << "You have folded for this round" << std::endl;
-					human.fold();
-					break;
-				}
-				Bot.makeDecision(theTable);
-				if (Bot.lastDecision == "call" || Bot.lastDecision == "fold") break;
-			}
+			theTable.bettingRound(human, Bot);
 
 			system("CLS");
 			if (Bot.lastDecision == "call" || Bot.lastDecision == "fold") std::cout << Bot.id << " " << Bot.lastDecision << "ed." << std::endl;
@@ -115,34 +66,7 @@ int main() {
 			std::cout << "Your current hand: " << std::endl;
 			std::cout << human << std::endl;
 
-			decisionMaking = true;
-			while (decisionMaking) {
-
-				std::cout << "What would you like to do (bet, call, or fold)? ";
-				std::cin >> decision;
-				if (decision == "0") return 1;
-
-				if (decision == "bet" || decision == "Bet") {
-					int amount = 0;
-					std::cout << "How much would you like to bet? ";
-					std::cin >> amount;
-					theTable.bet(human, amount);
-					human.onTheLine = human.onTheLine + amount;
-				}
-				else if (decision == "call" || decision == "Call") {
-					std::cout << "You called" << std::endl;
-					theTable.call(human);
-					human.onTheLine = human.onTheLine + theTable.lastBet;
-					break;
-				}
-				else if (decision == "fold" || decision == "Fold") {
-					std::cout << "You have folded for this round" << std::endl;
-					human.fold();
-					break;
-				}
-				Bot.makeDecision(theTable);
-				if (Bot.lastDecision == "call" || Bot.lastDecision == "fold") break;
-			}
+			theTable.bettingRound(human, Bot);
 			break;
 		}
 
@@ -174,4 +98,17 @@ int main() {
 		system("pause");
 		system("CLS");
 	}
+
+	String winnerID;
+	String loserID;
+	if (human.money == 0) {
+		winnerID = Bot.id;
+		loserID = human.id;
+	}
+	else {
+		winnerID = human.id; 
+		loserID = Bot.id;
+	}
+
+	std::cout << "The winner was " << winnerID << ". " << loserID << " ran out of money. Thanks for playing!\n";
 }
